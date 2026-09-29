@@ -15,7 +15,12 @@ export function isSameOriginRequest(request: Request) {
   const origin = request.headers.get("origin");
   if (origin) return origin === expected;
   const referer = request.headers.get("referer");
-  return Boolean(referer && new URL(referer).origin === expected);
+  if (!referer) return false;
+  try {
+    return new URL(referer).origin === expected;
+  } catch {
+    return false;
+  }
 }
 
 export async function createSession(adminId: string) {
