@@ -34,7 +34,9 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
-      - run: npm install
+      - name: Generate lockfile for this CI run
+        run: npm install --package-lock-only --ignore-scripts
+      - run: npm ci
       - run: npm run db:generate
       - run: npm run typecheck
       - run: npm run lint
