@@ -1,28 +1,30 @@
 # Micromathaadi
 
-A full-stack editorial blogging platform foundation built with Next.js, React and TypeScript.
+Editorial publishing platform using Next.js App Router, React, TypeScript, Prisma and PostgreSQL.
 
-## Requirements
-- Node.js 20+
-- npm
+## Implemented in repository
+- Editorial homepage, article listing/detail, topic browsing, search and about page.
+- Admin login, bcrypt password verification and signed HTTP-only session cookie.
+- Admin dashboard, article create/edit, draft/publish workflow and protected API.
+- PostgreSQL models, validated inputs, slug generation and health endpoint.
+- Responsive dark editorial UI.
 
-## Development
+## Local setup
+Requires Node.js 20+, npm and PostgreSQL. Copy `.env.example` to `.env`; set DATABASE_URL, AUTH_SECRET (32+ random characters), ADMIN_EMAIL and ADMIN_PASSWORD (14+ characters). Then:
 ```bash
 npm install
+npx prisma generate
+npx prisma migrate dev --name init
+npm run db:admin
 npm run dev
 ```
+Open http://localhost:3000; admin login is /admin/login.
 
-Open http://localhost:3000.
+## Scripts
+`npm run build`, `npm run typecheck`, `npm run lint`, `npm run db:migrate`, `npm run db:deploy`, `npm run db:admin`.
 
-## Available scripts
-- `npm run dev` — local development server
-- `npm run build` — production build
-- `npm run start` — production server
-- `npm run typecheck` — TypeScript validation
-- `npm run lint` — ESLint
+## Production checklist
+Set secrets in hosting environment, configure PostgreSQL backups and monitoring, run `npm run db:deploy`, enforce HTTPS, configure edge rate limiting, and test restore/recovery before launch. No real credentials or production infrastructure are stored or provisioned here.
 
-## Current implementation
-The initial public editorial homepage and application foundation are present. Backend, database-backed CMS, authentication, editorial workflow, editor and deployment integrations remain to be implemented and verified before production use.
-
-## Configuration
-No production credentials are committed. Add required service configuration through environment variables as integrations are implemented.
+## Current limitations
+The editor stores plain-text paragraphs with line breaks; rich-text/MDX authoring, media upload, revision history, preview scheduling, email, analytics and deployment configuration are not included. Public pages render article body as text (not executable HTML), which avoids raw-HTML injection but is intentionally a minimal publishing format. Changes in GitHub have not been built or runtime-tested in this environment.
