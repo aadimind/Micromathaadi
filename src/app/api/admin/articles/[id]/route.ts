@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { getSession } from "@/lib/auth";
+import { getSession, isSameOriginRequest } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -17,6 +17,7 @@ const schema = z.object({
 });
 
 export async function PATCH(request: Request, { params }: Ctx) {
+  if (!isSameOriginRequest(request)) return NextResponse.json({ error: "Forbidden origin" }, { status: 403 });
   if (!await getSession()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
   let body: unknown;
@@ -36,7 +37,8 @@ export async function PATCH(request: Request, { params }: Ctx) {
   }
 }
 
-export async function DELETE(_request: Request, { params }: Ctx) {
+export async function DELETE(request: Request, { params }: Ctx) {
+  if (!isSameOriginRequest(request)) return NextResponse.json({ error: "Forbidden origin" }, { status: 403 });
   if (!await getSession()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
   try {
