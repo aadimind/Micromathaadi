@@ -1,0 +1,3 @@
+import { SiteNav } from "@/components/SiteNav";
+export const metadata = { title: "About" };
+export default function AboutPage() { return <main><SiteNav/><section className="page wrap"><div className="eyebrow">ABOUT MICROMATH</div><h1>Clarity without<br/><em>oversimplification.</em></h1><div className="prose"><p>Micromath is an independent reading space for mathematics, science, technology and research.</p><p>Our purpose is to make complex ideas approachable while preserving the reasoning, nuance and evidence that make them worth understanding.</p><p>Every article aims to connect foundational concepts with the questions they help us answer.</p></div></section></main>; }
