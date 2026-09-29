@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { getSession } from "@/lib/auth";
+import { getSession, isSameOriginRequest } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 
 const schema = z.object({
@@ -16,6 +16,7 @@ const schema = z.object({
 });
 
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request)) return NextResponse.json({ error: "Forbidden origin" }, { status: 403 });
   if (!await getSession()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   let body: unknown;
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Malformed JSON body" }, { status: 400 }); }
