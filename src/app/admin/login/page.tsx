@@ -1,0 +1,9 @@
+"use client";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+export default function LoginPage() {
+ const router=useRouter(); const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [error,setError]=useState(""); const [busy,setBusy]=useState(false);
+ async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError("");try{const res=await fetch("/api/auth/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email,password})});if(!res.ok)throw new Error("Email or password is incorrect.");router.push("/admin");router.refresh();}catch(err){setError(err instanceof Error?err.message:"Unable to sign in.");}finally{setBusy(false);}}
+ return <main className="auth-shell"><form className="auth-card" onSubmit={submit}><Link className="brand" href="/"><span className="brand-mark">μ</span> micromath<span className="brand-dot">.</span></Link><div className="eyebrow">EDITORIAL ACCESS</div><h1>Welcome <em>back.</em></h1><label>Email<input type="email" autoComplete="username" required value={email} onChange={e=>setEmail(e.target.value)}/></label><label>Password<input type="password" autoComplete="current-password" required value={password} onChange={e=>setPassword(e.target.value)}/></label>{error?<p className="form-error" role="alert">{error}</p>:null}<button disabled={busy} type="submit">{busy?"Signing in…":"Sign in →"}</button><p className="auth-note">Administrator account is provisioned using the secure setup command.</p></form></main>;
+}
