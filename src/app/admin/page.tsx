@@ -1,0 +1,11 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
+import { getSession } from "@/lib/auth";
+import { SignOutButton } from "@/components/SignOutButton";
+export const dynamic = "force-dynamic";
+export default async function AdminPage() {
+ const adminId=await getSession(); if(!adminId)redirect("/admin/login");
+ const [articles,published,drafts]=await Promise.all([db.article.findMany({orderBy:{updatedAt:"desc"}}),db.article.count({where:{status:"PUBLISHED"}}),db.article.count({where:{status:"DRAFT"}})]);
+ return <main className="admin-shell"><aside className="admin-sidebar"><Link className="brand" href="/"><span className="brand-mark">μ</span> micromath<span className="brand-dot">.</span></Link><div className="eyebrow">WORKSPACE</div><Link className="side-active" href="/admin">Overview</Link><Link href="/admin/articles/new">New article</Link><Link href="/articles">View website ↗</Link><SignOutButton/></aside><section className="admin-main"><div className="admin-top"><div><div className="eyebrow">EDITORIAL WORKSPACE</div><h1>Dashboard<span className="brand-dot">.</span></h1></div><Link className="primary-button" href="/admin/articles/new">Create article ↗</Link></div><div className="stats-grid"><div className="stat-card"><span>ALL ARTICLES</span><strong>{articles.length}</strong></div><div className="stat-card"><span>PUBLISHED</span><strong>{published}</strong></div><div className="stat-card"><span>DRAFTS</span><strong>{drafts}</strong></div></div><div className="admin-list-head"><h2>Recent articles</h2><span>{articles.length} total</span></div><div className="admin-table">{articles.map(a=><div className="admin-row" key={a.id}><div><span className="story-category">{a.category}</span><strong>{a.title}</strong><small>Updated {a.updatedAt.toLocaleDateString()}</small></div><span className={a.status==="PUBLISHED"?"status-live":"status-draft"}>{a.status}</span><Link href={`/admin/articles/${a.id}`}>Edit ↗</Link></div>)}{articles.length===0?<p className="empty-state">No articles yet. Create your first draft.</p>:null}</div></section></main>;
+}
