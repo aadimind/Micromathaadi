@@ -1,3 +1,9 @@
 export function slugify(input: string) {
-  return input.normalize("NFKD").toLowerCase().trim().replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 90);
+  const normalized = input.normalize("NFKC").toLocaleLowerCase().trim();
+  const slug = normalized
+    .replace(/[^\\p{L}\\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 90)
+    .replace(/-+$/g, "");
+  return slug;
 }
